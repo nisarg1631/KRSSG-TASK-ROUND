@@ -18,4 +18,8 @@ Input format- Enter as many entries as you want. As soon as you want the elevato
 
 *Task3
 
-Directly execute the 
+Directly run the rrt_star_connect file or make it using the rrt_star_connect.cpp and then run it. The my_turtle_rrt is the ROS source file for the 2nd and 3rd part of the task.
+
+*Task4
+
+Observation data and modified scripts of pendulum environment for different changes have been attached.
