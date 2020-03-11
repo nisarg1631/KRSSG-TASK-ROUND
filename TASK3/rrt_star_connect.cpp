@@ -108,7 +108,7 @@ bool isValid(Mat obst, point near, point step){
     int j;
     for(int i=y1; i<=y2; i++){
       j=(int)((m*i)+c);
-      if(obst.at<uchar>(j,i)==255){
+      if(obst.at<uchar>(i,j)==255){
         return false;
       }
     }
@@ -117,13 +117,13 @@ bool isValid(Mat obst, point near, point step){
   return true;
 }
 
-void minimal_cost(node* step){
+void minimal_cost(Mat obst,node* step){
   float new_cost;
   float min_cost=step->cost;
   int index;
   if(state==1){
     for(int i=0; i<nodecount_start; i++){
-      if(dist(start_nodes[i].loc,step->loc)<circle_radius_1){
+      if(dist(start_nodes[i].loc,step->loc)<circle_radius_1&&isValid(obst,start_nodes[i].loc,step->loc)){
         new_cost=dist(start_nodes[i].loc,step->loc)+start_nodes[i].cost;
         if(new_cost<min_cost){
           min_cost=new_cost;
@@ -138,7 +138,7 @@ void minimal_cost(node* step){
   }
   else{
     for(int i=0; i<nodecount_end; i++){
-      if(dist(end_nodes[i].loc,step->loc)<circle_radius_1){
+      if(dist(end_nodes[i].loc,step->loc)<circle_radius_1&&isValid(obst,end_nodes[i].loc,step->loc)){
         new_cost=dist(end_nodes[i].loc,step->loc)+end_nodes[i].cost;
         if(new_cost<min_cost){
           min_cost=new_cost;
@@ -294,8 +294,8 @@ void rrt_connect(point p_start, point p_end, Mat &img, Mat obst){
       else{
         step_node->parent=&start_nodes[index];
         step_node->cost=start_nodes[index].cost+step_size;
-        minimal_cost(step_node);
-        rewiring(img,obst,step_node);
+        minimal_cost(obst,step_node);
+        //rewiring(img,obst,step_node);
         start_nodes[nodecount_start]=*step_node;
         nodecount_start++;
       }
@@ -310,7 +310,7 @@ void rrt_connect(point p_start, point p_end, Mat &img, Mat obst){
 
         index=nearest_node(*step_node);
 
-        if(dist(end_nodes[index].loc,step_node->loc)<10.0&&isValid(obst,step_node->loc,end_nodes[index].loc)){
+        if(dist(end_nodes[index].loc,step_node->loc)<20.0&&isValid(obst,step_node->loc,end_nodes[index].loc)){
             line(img, Point((step_node->loc).x,(step_node->loc).y), Point(end_nodes[index].loc.x,end_nodes[index].loc.y), Scalar(255,0,0),2,8);
             connected=1;
             sub_state=1;
@@ -330,8 +330,8 @@ void rrt_connect(point p_start, point p_end, Mat &img, Mat obst){
         else{
           sub_step_node->parent=&end_nodes[index];
           sub_step_node->cost=end_nodes[index].cost+step_size;
-          minimal_cost(sub_step_node);
-          rewiring(img,obst,sub_step_node);
+          minimal_cost(obst,sub_step_node);
+          //rewiring(img,obst,sub_step_node);
           end_nodes[nodecount_end]=*sub_step_node;
           nodecount_end++;
         }
@@ -363,8 +363,8 @@ void rrt_connect(point p_start, point p_end, Mat &img, Mat obst){
       else{
         step_node->parent=&end_nodes[index];
         step_node->cost=end_nodes[index].cost+step_size;
-        minimal_cost(step_node);
-        rewiring(img,obst,step_node);
+        minimal_cost(obst,step_node);
+        //rewiring(img,obst,step_node);
         end_nodes[nodecount_end]=*step_node;
         nodecount_end++;
       }
@@ -399,8 +399,8 @@ void rrt_connect(point p_start, point p_end, Mat &img, Mat obst){
         else{
           sub_step_node->parent=&start_nodes[index];
           sub_step_node->cost=start_nodes[index].cost+step_size;
-          minimal_cost(sub_step_node);
-          rewiring(img,obst,sub_step_node);
+          minimal_cost(obst,sub_step_node);
+          //rewiring(img,obst,sub_step_node);
           start_nodes[nodecount_start]=*sub_step_node;
           nodecount_start++;
         }
